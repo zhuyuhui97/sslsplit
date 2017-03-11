@@ -519,7 +519,7 @@ log_content_open(log_content_ctx_t **pctx, opts_t *opts,
 		struct timespec ns_time;
 		char *dsthost_clean, *srchost_clean;
 
-		if (clock_gettime(CLOCK_RELATIME,&ns_time) == -1) {
+		if (clock_gettime(CLOCK_REALTIME,&ns_time) == -1) {
 			log_err_printf("Failed to get time\n");
 			goto errout;
 		}
