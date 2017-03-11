@@ -515,22 +515,16 @@ log_content_open(log_content_ctx_t **pctx, opts_t *opts,
 	if (opts->contentlog_isdir) {
 		/* per-connection-file content log (-S) */
 		char timebuf[24];
-		time_t epoch;
-		struct tm *utc;
-		char *dsthost_clean, *srchost_clean;
+		/*Structure to store time in nanosecond*/
+		struct timespec ns_time;
 
-		if (time(&epoch) == -1) {
+		if (clock_gettime(CLOCK_RELATIME,&ns_time) == -1) {
 			log_err_printf("Failed to get time\n");
 			goto errout;
 		}
-		if ((utc = gmtime(&epoch)) == NULL) {
-			log_err_printf("Failed to convert time: %s (%i)\n",
-			               strerror(errno), errno);
-			goto errout;
-		}
-		if (!strftime(timebuf, sizeof(timebuf),
-		              "%Y%m%dT%H%M%SZ", utc)) {
-			log_err_printf("Failed to format time: %s (%i)\n",
+		if (asprintf(timebuf,"%llu.%llu",
+		             ns_time.tv_sec, ns_time.tv_nsec)<0){
+		    log_err_printf("Failed to format time: %s (%i)\n",
 			               strerror(errno), errno);
 			goto errout;
 		}
