@@ -683,7 +683,7 @@ log_content_dir_writecb(void *fh, const void *buf, size_t sz)
                     strerror(errno), errno);
         return -1;
     }
-	stamp_len=sprintf(stamp_buf, "\x00\x08<%s, %d>\n", timebuf ,sz);
+	stamp_len=sprintf(stamp_buf, "\x04\x08<%s, %d>\n", timebuf ,sz);
 	if (stamp_len<0){
         log_err_printf("Failed to generate packet information string: %s (%i)\n",
                        strerror(errno), errno);
