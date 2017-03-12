@@ -667,8 +667,30 @@ static ssize_t
 log_content_dir_writecb(void *fh, const void *buf, size_t sz)
 {
 	log_content_ctx_t *ctx = fh;
+	char stamp_buf[50];
+	int stamp_len;
+	struct timespec ns_time;
+	char timebuf[24];
 
-	if (write(ctx->u.dir.fd, buf, sz) == -1) {
+	if (clock_gettime(CLOCK_REALTIME,&ns_time) == -1) {
+        log_err_printf("Failed to get time: %s (%i)\n",
+                       strerror(errno), errno);
+        return -1;
+    }
+    if (sprintf(timebuf, "%llu.%llu",
+                ns_time.tv_sec, ns_time.tv_nsec) < 0){
+        log_err_printf("Failed to format time: %s (%i)\n",
+                    strerror(errno), errno);
+        return -1;
+    }
+	stamp_len=sprintf(stamp_buf, "\x00\x08<%s, %d>\n", timebuf ,sz);
+	if (stamp_len<0){
+        log_err_printf("Failed to generate packet information string: %s (%i)\n",
+                       strerror(errno), errno);
+        return -1;
+	}
+	if (write(ctx->u.dir.fd, stamp_buf, stamp_len)
+     &&write(ctx->u.dir.fd, buf, sz) == -1) {
 		log_err_printf("Warning: Failed to write to content log: %s\n",
 		               strerror(errno));
 		return -1;
