@@ -523,7 +523,7 @@ log_content_open(log_content_ctx_t **pctx, opts_t *opts,
 			log_err_printf("Failed to get time\n");
 			goto errout;
 		}
-		if (sprintf(timebuf, "%llu.%llu",
+		if (sprintf(timebuf, "%lu.%lu",
 		             ns_time.tv_sec, ns_time.tv_nsec) < 0){
 		    log_err_printf("Failed to format time: %s (%i)\n",
 			               strerror(errno), errno);
@@ -677,7 +677,7 @@ log_content_dir_writecb(void *fh, const void *buf, size_t sz)
                        strerror(errno), errno);
         return -1;
     }
-    if (sprintf(timebuf, "%llu.%llu",
+    if (sprintf(timebuf, "%lu.%lu",
                 ns_time.tv_sec, ns_time.tv_nsec) < 0){
         log_err_printf("Failed to format time: %s (%i)\n",
                     strerror(errno), errno);
