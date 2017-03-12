@@ -523,8 +523,8 @@ log_content_open(log_content_ctx_t **pctx, opts_t *opts,
 			log_err_printf("Failed to get time\n");
 			goto errout;
 		}
-		if (asprintf(timebuf,"%llu.%llu",
-		             ns_time.tv_sec, ns_time.tv_nsec)<0){
+		if (sprintf(timebuf, "%llu.%llu",
+		             ns_time.tv_sec, ns_time.tv_nsec) < 0){
 		    log_err_printf("Failed to format time: %s (%i)\n",
 			               strerror(errno), errno);
 			goto errout;
